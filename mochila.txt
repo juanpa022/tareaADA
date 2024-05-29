@@ -1,0 +1,72 @@
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+// Función para resolver el problema de la mochila 0/1 con poda según el beneficio estimado por el algoritmo voraz
+void knapsack(int n, int M, int v[], int w[], int x[]) {
+    int i, j, k;
+    int b[n];
+    float c[n], temp;
+
+    // Inicializar los arreglos b y c
+    for (i = 0; i < n; i++) {
+        b[i] = 0;
+        c[i] = (float) v[i] / (float) w[i];
+    }
+
+    // Ordenar los elementos en orden decreciente de c
+    for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (c[i] < c[j]) {
+                temp = c[j];
+                c[j] = c[i];
+                c[i] = temp;
+
+                k = v[j];
+                v[j] = v[i];
+                v[i] = k;
+
+                k = w[j];
+                w[j] = w[i];
+                w[i] = k;
+            }
+        }
+    }
+
+    // Resolver el problema de la mochila 0/1
+    for (i = 0; i < n; i++) {
+        if (w[i] > M) {
+            break;
+        } else {
+            b[i] = 1;
+            x[i] = 1;
+            M -= w[i];
+        }
+    }
+
+    if (i < n) {
+        b[i] = M / w[i];
+        x[i] = b[i];
+    }
+
+    // Imprimir la solución
+    cout << "La solución es: ";
+    for (i = 0; i < n; i++) {
+        cout << x[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    // Ejemplo de uso
+    int n = 5;
+    int M = 20;
+    int v[] = {10, 7, 6, 4, 20};
+    int w[] = {30, 15, 11, 8, 2};
+    int x[5] = {0};  // Cambiado el tamaño fijo "x[n]"
+
+    knapsack(n, M, v, w, x);
+
+    return 0;
+}
